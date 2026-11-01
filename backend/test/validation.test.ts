@@ -12,4 +12,10 @@ describe('input validation', () => {
     expect(r.success).toBe(true);
     if (r.success) expect(r.data.pickupDate).toBe(Date.parse('2026-11-20'));
   });
+
+  it('trims the reference ID and the name', () => {
+    const r = createSchema.safeParse(rfqBody({ refId: '  RFQ-X1  ', name: '  Lane  ' }));
+    expect(r.success).toBe(true);
+    if (r.success) expect([r.data.refId, r.data.name]).toEqual(['RFQ-X1', 'Lane']);
+  });
 });
