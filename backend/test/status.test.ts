@@ -9,4 +9,8 @@ describe('status boundaries', () => {
     expect(statusAt(t, at(10) - 1)).toBe('SCHEDULED');
     expect(statusAt(t, at(10))).toBe('ACTIVE');
   });
+
+  it('is still ACTIVE one millisecond before the close', () => {
+    expect(statusAt(t, at(18) - 1)).toBe('ACTIVE');
+  });
 });
