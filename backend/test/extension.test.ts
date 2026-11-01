@@ -32,4 +32,11 @@ describe('extension edge cases', () => {
     const e = evalExtension({ ...base, trig: 'L1_CHANGE', before: [], after: rk([1, 100]) });
     expect(e.outcome).toBe('EXTENDED');
   });
+
+  it('blocks all three triggers once the close already equals the forced close', () => {
+    for (const trig of ['BID_RECEIVED', 'ANY_RANK_CHANGE', 'L1_CHANGE'] as const) {
+      const e = evalExtension({ ...base, trig, closeMs: at(19), nowMs: at(18, 55) });
+      expect(e).toMatchObject({ outcome: 'BLOCKED', newCloseMs: at(19) });
+    }
+  });
 });
