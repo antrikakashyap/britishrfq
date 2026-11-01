@@ -32,4 +32,16 @@ describe('REST API details', () => {
     expect((await api.get('/api/auctions?q=MUMBAI')).body).toHaveLength(1);
     expect((await api.get('/api/auctions?q=rfq-t-2')).body[0].name).toBe('Chennai lane');
   });
+
+  it('returns the total bid count and the full price history on the details route', async () => {
+    const { api, set } = boot();
+    await api.post('/api/auctions').send(rfqBody());
+    set(at(12));
+    await api.post('/api/auctions/RFQ-T-1/bids').send(bidBody('Maersk', 1000));
+    await api.post('/api/auctions/RFQ-T-1/bids').send(bidBody('Maersk', 990));
+    const d = (await api.get('/api/auctions/RFQ-T-1?bids=1')).body;
+    expect(d.bids).toHaveLength(1);
+    expect(d.bidsTotal).toBe(2);
+    expect(d.history).toHaveLength(2);
+  });
 });
