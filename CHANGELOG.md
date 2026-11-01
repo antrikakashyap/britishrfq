@@ -9,7 +9,7 @@ All notable changes. Newest first.
 - JSON errors for oversized bodies (413) and malformed URLs (400) instead of 500.
 - Better contrast for secondary text; the activity log can be scrolled with the keyboard.
 - Dependencies upgraded (zod 4, vitest 5, react-router 7): `npm audit` reports 0 issues.
-- Added component tests, an accessibility scan and a demo video with a voice-over script.
+- Added component tests and an accessibility scan.
 
 ## 1.0.0
 
