@@ -51,4 +51,9 @@ describe('input validation', () => {
     for (const d of [1, 365]) expect(bidSchema.safeParse(bidBody('A1', 1000, { transitTimeDays: d, quoteValidityDays: d })).success).toBe(true);
     for (const d of [0, 366]) expect(bidSchema.safeParse(bidBody('A1', 1000, { transitTimeDays: d })).success).toBe(false);
   });
+
+  it('rejects a charge with three decimals and a bid that totals zero', () => {
+    expect(bidSchema.safeParse(bidBody('A1', 1000, { freightCharges: 100.123 })).success).toBe(false);
+    expect(bidSchema.safeParse({ ...bidBody('A1', 1000), freightCharges: 0, originCharges: 0, destinationCharges: 0 }).success).toBe(false);
+  });
 });
