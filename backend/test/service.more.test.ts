@@ -31,4 +31,10 @@ describe('service details', () => {
     const q = k.svc.details('RFQ-T-1').ranking[0]!;
     expect(Date.parse(q.validUntil) - Date.parse(q.submittedAt)).toBe(10 * 86_400_000);
   });
+
+  it('opens an RFQ at once when its start time is already in the past', () => {
+    const k = mkSvc(at(12));
+    const d = k.svc.createRfq(rfqBody({ bidStart: isoAt(9) }));
+    expect(d.auction.status).toBe('ACTIVE');
+  });
 });
