@@ -17,4 +17,8 @@ describe('status boundaries', () => {
   it('is CLOSED at the close when the forced close is later', () => {
     expect(statusAt(t, at(18))).toBe('CLOSED');
   });
+
+  it('is FORCE_CLOSED at the close when the close equals the forced close', () => {
+    expect(statusAt({ ...t, closeMs: at(19) }, at(19))).toBe('FORCE_CLOSED');
+  });
 });
