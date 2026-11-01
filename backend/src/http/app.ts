@@ -28,6 +28,10 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
   app.use(express.json({ limit: '32kb' }));
 
   const api = express.Router();
+  api.use((_q, s, next) => {
+    s.set('Cache-Control', 'no-store');
+    next();
+  });
 
   if (writeLimit > 0)
     api.use(
