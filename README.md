@@ -35,6 +35,21 @@ npm run seed         # reset the demo data
 click **Simulate a rival bid** (or submit your own lower quote) and watch the clock jump by Y minutes, the timeline strip grow, and the
 activity log record *why*.
 
+## Deploy to Render (free)
+
+1. Push is already done: this repo contains a [`render.yaml`](render.yaml) Blueprint.
+2. On [dashboard.render.com](https://dashboard.render.com) choose **New > Blueprint**, select this repo and click **Apply**.
+3. When the build finishes, open the `*.onrender.com` URL. Health check: `/api/health`.
+
+The free plan has no persistent disk, so data resets on redeploy or after the service sleeps; the demo auctions are re-seeded
+automatically on start (`ENABLE_DEMO=1`). On a paid plan, attach a disk and set `DB_PATH=/var/data/rfq.db` (see the comments in `render.yaml`).
+
+Verify any deployment end to end with real time (about 3.5 minutes, creates `E2E-*` auctions):
+
+```bash
+BASE=https://<your-service>.onrender.com npm run e2e
+```
+
 ## Deliverables
 
 | Required (spec §9) | Where |

@@ -1,0 +1,25 @@
+# Render Blueprint - New > Blueprint > pick this repo > Apply.
+services:
+  - type: web
+    name: british-auction-rfq
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: NODE_ENV
+        value: production
+      - key: ENABLE_DEMO          # seeds demo auctions + shows "Simulate a rival bid"
+        value: "1"
+      - key: DB_PATH
+        value: /tmp/rfq.db        # free plan has no persistent disk: data resets on redeploy / spin-down
+    # Paid plans: keep data across deploys by attaching a disk and setting DB_PATH=/var/data/rfq.db
+    # disk:
+    #   name: rfq-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
