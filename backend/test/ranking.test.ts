@@ -19,4 +19,9 @@ describe('ranking', () => {
     const r = rankBids([b(2, 1, 400, 10), b(1, 2, 400, 10)]);
     expect(r.map((x) => x.supId)).toEqual([2, 1]);
   });
+
+  it('uses only a supplier’s best bid, not its older higher ones', () => {
+    const r = rankBids([b(1, 1, 900), b(2, 2, 800), b(3, 1, 700)]);
+    expect(r.map((x) => [x.supId, x.total])).toEqual([[1, 700], [2, 800]]);
+  });
 });
