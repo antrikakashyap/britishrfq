@@ -18,4 +18,8 @@ describe('input validation', () => {
     expect(r.success).toBe(true);
     if (r.success) expect([r.data.refId, r.data.name]).toEqual(['RFQ-X1', 'Lane']);
   });
+
+  it('rejects a reference ID that contains spaces', () => {
+    expect(createSchema.safeParse(rfqBody({ refId: 'RFQ X1' })).success).toBe(false);
+  });
 });
