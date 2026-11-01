@@ -21,4 +21,10 @@ describe('formatting', () => {
     expect(v).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
     expect(fromLocalInput(v)).toBe(Date.UTC(2026, 10, 5, 12, 34, 0));
   });
+
+  it('has a label for every status and a sentence for every trigger', () => {
+    expect(STATUS_TEXT).toEqual({ SCHEDULED: 'Scheduled', ACTIVE: 'Active', CLOSED: 'Closed', FORCE_CLOSED: 'Force closed' });
+    for (const t of Object.values(TRIG_TEXT)) expect(t).toContain('X');
+    expect(dateOnly(Date.UTC(2026, 10, 5, 12))).toMatch(/2026/);
+  });
 });
