@@ -46,4 +46,9 @@ describe('input validation', () => {
     expect(r.success).toBe(true);
     if (r.success) expect(r.data.carrierName).toBe('Maersk Line');
   });
+
+  it('accepts transit and validity of 1 and 365 days but not 0 or 366', () => {
+    for (const d of [1, 365]) expect(bidSchema.safeParse(bidBody('A1', 1000, { transitTimeDays: d, quoteValidityDays: d })).success).toBe(true);
+    for (const d of [0, 366]) expect(bidSchema.safeParse(bidBody('A1', 1000, { transitTimeDays: d })).success).toBe(false);
+  });
 });
