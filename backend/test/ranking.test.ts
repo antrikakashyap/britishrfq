@@ -30,4 +30,10 @@ describe('ranking', () => {
     expect(r.map((x) => rankLabel(x.rank))).toEqual(['L1', 'L2', 'L3', 'L4', 'L5']);
     expect(r.map((x) => x.supId)).toEqual([2, 4, 5, 3, 1]);
   });
+
+  it('reports no rank change for identical rankings and a change when a supplier joins', () => {
+    const a = rankBids([b(1, 1, 100), b(2, 2, 200)]);
+    expect(rankChanged(a, a)).toBe(false);
+    expect(rankChanged(a, rankBids([b(1, 1, 100), b(2, 2, 200), b(3, 3, 300)]))).toBe(true);
+  });
 });
