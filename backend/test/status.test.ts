@@ -13,4 +13,8 @@ describe('status boundaries', () => {
   it('is still ACTIVE one millisecond before the close', () => {
     expect(statusAt(t, at(18) - 1)).toBe('ACTIVE');
   });
+
+  it('is CLOSED at the close when the forced close is later', () => {
+    expect(statusAt(t, at(18))).toBe('CLOSED');
+  });
 });
