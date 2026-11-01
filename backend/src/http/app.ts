@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { rivalBid } from '../demo.js';
 import { AppError } from '../errors.js';
+import { LIMITS } from '../limits.js';
 import type { AuctionService, LiveEvent } from '../service.js';
 
 export interface AppOpts {
@@ -59,7 +60,7 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
   // Server-Sent Events: the UI refetches whenever something changes (no polling storms).
   let sse = 0;
   api.get('/events', (q, s) => {
-    if (sse >= 500) throw new AppError('RATE_LIMITED', 503, 'Too many live connections - try again shortly');
+    if (sse >= LIMITS.sseMax) throw new AppError('RATE_LIMITED', 503, 'Too many live connections - try again shortly');
     sse++;
     s.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
     s.flushHeaders();

@@ -1,6 +1,7 @@
 import { EventEmitter } from 'node:events';
 import type { Db } from './db.js';
 import { AppError } from './errors.js';
+import { LIMITS } from './limits.js';
 import { evalExtension, type ExtResult } from './domain/extension.js';
 import { fromCents, toCents } from './domain/money.js';
 import { byPrice, rankBids, rankLabel, type BidLite, type RankRow } from './domain/ranking.js';
@@ -421,7 +422,7 @@ export class AuctionService {
       this.all<{ sid: number; n: number }>('SELECT supplier_id AS sid, COUNT(*) AS n FROM bids WHERE rfq_id = ? GROUP BY supplier_id', r.id).map((x) => [x.sid, x.n]),
     );
     const total = this.one<{ n: number }>('SELECT COUNT(*) AS n FROM bids WHERE rfq_id = ?', r.id)!.n;
-    const cap = opts.bids === 'all' ? -1 : Math.min(Math.max(opts.bids ?? 200, 1), 5000);
+    const cap = opts.bids === 'all' ? -1 : Math.min(Math.max(opts.bids ?? LIMITS.bidsDefault, 1), LIMITS.bidsMax);
     const rows = this.all<BidRow>(
       `SELECT ${BID_COLS} FROM bids b JOIN suppliers s ON s.id = b.supplier_id WHERE b.rfq_id = ?
        ORDER BY b.total_cents, b.created_ms, b.id LIMIT ?`,
@@ -429,7 +430,7 @@ export class AuctionService {
     );
     const hist = this.all<{ name: string; total: number; atMs: number }>(
       `SELECT s.name AS name, b.total_cents AS total, b.created_ms AS atMs FROM bids b JOIN suppliers s ON s.id = b.supplier_id
-       WHERE b.rfq_id = ? ORDER BY b.created_ms DESC, b.id DESC LIMIT 1500`,
+       WHERE b.rfq_id = ? ORDER BY b.created_ms DESC, b.id DESC LIMIT ${LIMITS.historyCap}`,
       r.id,
     ).reverse();
 
@@ -453,7 +454,7 @@ export class AuctionService {
     }>(
       `SELECT l.id, l.kind, l.message, l.reason, s.name AS name, l.old_close_ms AS oldMs, l.new_close_ms AS newMs, l.created_ms AS at
        FROM activity_log l LEFT JOIN suppliers s ON s.id = l.supplier_id WHERE l.rfq_id = ?
-       ORDER BY l.created_ms DESC, l.id DESC LIMIT 300`,
+       ORDER BY l.created_ms DESC, l.id DESC LIMIT ${LIMITS.activityCap}`,
       r.id,
     ).reverse();
     const low = rank[0] ? best.find((b) => b.id === rank[0]!.id)! : undefined;
