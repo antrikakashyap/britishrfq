@@ -14,4 +14,9 @@ describe('ranking', () => {
     expect(r[0]).toMatchObject({ supId: 7, rank: 1 });
     expect(rankLabel(r[0]!.rank)).toBe('L1');
   });
+
+  it('breaks a full tie (same price, same time) by the lower bid id', () => {
+    const r = rankBids([b(2, 1, 400, 10), b(1, 2, 400, 10)]);
+    expect(r.map((x) => x.supId)).toEqual([2, 1]);
+  });
 });
