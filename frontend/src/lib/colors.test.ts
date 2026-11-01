@@ -20,4 +20,12 @@ describe('supplier colours', () => {
     expect(c.get('S8')).toBe('var(--s9)');
     expect(c.get('S9')).toBe('var(--s9)');
   });
+
+  it('adds a dash pattern to later series so colour is not the only clue', () => {
+    expect(seriesIndex('var(--s3)')).toBe(2);
+    expect(seriesIndex('var(--s9)')).toBe(8);
+    expect(DASHES).toHaveLength(9);
+    expect(DASHES.slice(0, 4).every((d) => d === '')).toBe(true);
+    expect(DASHES[4]).not.toBe('');
+  });
 });
