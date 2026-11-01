@@ -113,6 +113,15 @@ docs/      HLD.md · SCHEMA.md · API.md · img/ · screenshots/
 
 Configuration (env): `PORT` (8080), `DB_PATH` (`backend/data/rfq.db`), `ENABLE_DEMO` (`1` shows the "Simulate a rival bid" helper and seeds an empty DB; default on outside production), `WEB_DIR`.
 
+## Known limitations (honest list)
+
+* **No authentication.** Any caller can create RFQs and bid under any carrier name. Role-based auth (buyer / supplier users) is the first production step.
+* **Single node.** SQLite + in-process event bus + 1 s sweeper. Fine for one instance; see `docs/HLD.md` section 6 for the Postgres / pub-sub path.
+* **Ranking cost grows with bid count** (all bids of an RFQ are re-ranked on each bid): about 5 ms at 500 bids, about 50 ms at 3,000. The details endpoint is not paginated.
+* **No buyer award / cancel / edit flow.** The brief covers bidding, extension and visibility only.
+* **Free-tier hosting resets data** on redeploy and sleeps when idle.
+* **Dependency audit:** `zod@3` and `react-router@6` have advisories (not reachable here: no array schemas, no SSR), and `vitest@3` is dev-only. Upgrading means a major-version migration.
+
 ## License
 
 MIT

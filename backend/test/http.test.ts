@@ -77,4 +77,14 @@ describe('REST API', () => {
     expect(nf.status).toBe(404);
     expect(nf.body.error.code).toBe('NOT_FOUND');
   });
+
+  it('maps framework-level client errors to JSON 4xx instead of 500', async () => {
+    const { api } = boot();
+    const big = await api.post('/api/auctions').set('Content-Type', 'application/json').send(JSON.stringify({ x: 'a'.repeat(200_000) }));
+    expect(big.status).toBe(413);
+    expect(big.body.error.code).toBe('PAYLOAD_TOO_LARGE');
+    const bad = await api.get('/api/auctions/%E0%A4%A');
+    expect(bad.status).toBe(400);
+    expect(bad.body.error.code).toBe('BAD_REQUEST');
+  });
 });

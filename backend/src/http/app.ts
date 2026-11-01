@@ -86,6 +86,18 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
       s.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Request body is not valid JSON' } });
       return;
     }
+    // client errors raised by Express / body-parser (too large, malformed URL, bad charset, ...)
+    const st = Number(e?.status ?? e?.statusCode);
+    if (st >= 400 && st < 500) {
+      const big = st === 413;
+      s.status(st).json({
+        error: {
+          code: big ? 'PAYLOAD_TOO_LARGE' : 'BAD_REQUEST',
+          message: big ? 'Request body is too large' : 'The request could not be understood',
+        },
+      });
+      return;
+    }
     console.error(e);
     s.status(500).json({ error: { code: 'INTERNAL', message: 'Something went wrong' } });
   };

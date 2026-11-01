@@ -6,6 +6,8 @@ export type ErrCode =
   | 'AUCTION_CLOSED'
   | 'BID_NOT_LOWER'
   | 'RATE_LIMITED'
+  | 'PAYLOAD_TOO_LARGE'
+  | 'BAD_REQUEST'
   | 'DEMO_DISABLED'
   | 'INTERNAL';
 

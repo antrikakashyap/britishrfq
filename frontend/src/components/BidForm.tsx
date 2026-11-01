@@ -79,8 +79,7 @@ export default function BidForm({ d, now, demo, onDone }: P) {
           {atCeiling ? 'The auction is at its Forced Bid Close, so it cannot be extended again.' : `${trigText} extends the close by ${a.config.extensionMin} min, to ${time(nextClose)}${nextClose < close + a.config.extensionMin * 60000 ? ' (capped at the Forced Bid Close)' : ''}.`}
         </div>
       )}
-      {top && !Object.keys(errs).length && <div className="err" role="alert">{top}</div>}
-      {top && Object.keys(errs).length > 0 && <div className="err" role="alert">{top}</div>}
+      {top && <div className="err" role="alert">{top}</div>}
       {fld('carrierName', 'Carrier name', <>
         {inp('carrier', 'carrierName', { list: 'carriers', autoComplete: 'organization', placeholder: 'e.g. Maersk Line' })}
         <datalist id="carriers">{d.ranking.map((r) => <option key={r.bidId} value={r.carrierName} />)}</datalist>
