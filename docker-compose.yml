@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      ENABLE_DEMO: "1"      # demo seed data + "Simulate a rival bid" button
+    volumes:
+      - rfq-data:/data
+volumes:
+  rfq-data:
