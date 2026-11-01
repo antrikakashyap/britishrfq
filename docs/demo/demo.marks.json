@@ -1,0 +1,76 @@
+{
+  "say": {
+    "intro": "This is British Auction RFQ: a platform where suppliers compete openly, and the clock itself keeps the auction fair.",
+    "idea": "When a company ships goods, it asks several carriers for a price. That request is called an RFQ. In a British auction, carriers bid openly, and each one can only lower its own price. This is the home page: every auction, with its lowest bid, its closing time, and its status.",
+    "metrics": "At the top, we measure what matters: how many bids each RFQ receives, and whether the extra time really brings a better price.",
+    "create": "Creating an auction takes one form. Name it, give it a start time, a close time, and a forced close, which is the hard deadline. If I set the forced close before the close, the form stops me, because it must always be later. Then I choose the rules: watch the last ten minutes, add five minutes when something happens, and decide what counts as activity. The preview shows exactly how the clock will behave.",
+    "live": "Now a live auction. The countdown follows the server's clock, so nobody can cheat with their own. The timeline shows the original close, time already added in amber, and the trigger window we are inside right now. Suppliers are ranked L1, L2, L3 with every charge, and the chart shows who undercut whom.",
+    "extend": "Let's bid as Evergreen Marine, four thousand four hundred dollars, lower than everyone. It arrives inside the trigger window and makes us the new lowest bidder, so the auction is extended by ten minutes. The countdown jumps, the timeline grows, and the activity log records exactly why.",
+    "noext": "Not every bid extends the clock. This auction only reacts to a new lowest bidder. CMA CGM improves its price but stays second, so there is no extension. The rule is applied exactly as configured.",
+    "rules": "The rules are enforced. A supplier cannot repeat or raise its price. The bid is rejected with a clear message, and nothing is saved.",
+    "force": "The forced close is the safety net. This auction kept receiving late bids, and was extended again and again, until it hit the hard stop. The log shows one extension that was cut short, and a later one that was refused. It ended Force closed, never one minute past the deadline.",
+    "outro": "Under the hood: React and Node, written in TypeScript. Every rule is tested, including a real-time run of a whole auction. Zero accessibility issues, and zero security vulnerabilities. It is live right now. Try it."
+  },
+  "marks": [
+    {
+      "key": "intro",
+      "title": "Intro",
+      "start": 0.003,
+      "end": 11.023
+    },
+    {
+      "key": "idea",
+      "title": "The idea",
+      "start": 11.927,
+      "end": 38.927
+    },
+    {
+      "key": "metrics",
+      "title": "Is it working?",
+      "start": 38.927,
+      "end": 51.949
+    },
+    {
+      "key": "create",
+      "title": "Create an RFQ",
+      "start": 51.949,
+      "end": 90.967
+    },
+    {
+      "key": "live",
+      "title": "A live auction",
+      "start": 90.967,
+      "end": 119.022
+    },
+    {
+      "key": "extend",
+      "title": "A late bid extends the clock",
+      "start": 119.023,
+      "end": 144.122
+    },
+    {
+      "key": "noext",
+      "title": "Not every bid extends",
+      "start": 144.122,
+      "end": 163.208
+    },
+    {
+      "key": "rules",
+      "title": "The rules are enforced",
+      "start": 163.208,
+      "end": 177.231
+    },
+    {
+      "key": "force",
+      "title": "The forced close",
+      "start": 177.231,
+      "end": 204.274
+    },
+    {
+      "key": "outro",
+      "title": "Wrap-up",
+      "start": 204.291,
+      "end": 223.354
+    }
+  ]
+}

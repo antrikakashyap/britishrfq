@@ -20,20 +20,21 @@
 
 1. [The 30-second version](#the-30-second-version)
 2. [Try the live app](#try-the-live-app)
-3. [What it looks like](#what-it-looks-like)
-4. [How a British auction works](#how-a-british-auction-works)
-5. [How the system is built](#how-the-system-is-built)
-6. [What happens when someone places a bid](#what-happens-when-someone-places-a-bid)
-7. [The three pages](#the-three-pages)
-8. [The rules that are checked](#the-rules-that-are-checked)
-9. [Does it cover the assignment?](#does-it-cover-the-assignment)
-10. [How it was checked](#how-it-was-checked)
-11. [What went wrong first](#what-went-wrong-first)
-12. [Choices I made where the brief was silent](#choices-i-made-where-the-brief-was-silent)
-13. [Run it on your computer](#run-it-on-your-computer)
-14. [Deploy it yourself](#deploy-it-yourself)
-15. [Project layout](#project-layout)
-16. [Limitations](#limitations)
+3. [Demo video and pitch](#demo-video-and-pitch)
+4. [What it looks like](#what-it-looks-like)
+5. [How a British auction works](#how-a-british-auction-works)
+6. [How the system is built](#how-the-system-is-built)
+7. [What happens when someone places a bid](#what-happens-when-someone-places-a-bid)
+8. [The three pages](#the-three-pages)
+9. [The rules that are checked](#the-rules-that-are-checked)
+10. [Does it cover the assignment?](#does-it-cover-the-assignment)
+11. [How it was checked](#how-it-was-checked)
+12. [What went wrong first](#what-went-wrong-first)
+13. [Choices I made where the brief was silent](#choices-i-made-where-the-brief-was-silent)
+14. [Run it on your computer](#run-it-on-your-computer)
+15. [Deploy it yourself](#deploy-it-yourself)
+16. [Project layout](#project-layout)
+17. [Limitations](#limitations)
 
 ## <img src="docs/assets/icons/box.svg" width="26" height="26" alt=""> The 30-second version
 
@@ -78,6 +79,39 @@ Open **<https://british-auction-rfq-3cc2.onrender.com>**. Seven demo auctions ar
 - **"Nhava Sheva → Felixstowe"** is a **Force closed** auction. Its log shows an extension that was cut short, and a later one that was refused.
 - **New RFQ** lets you create your own auction. Try setting the forced close earlier than the bid close and see the error.
 - On the home page, the strip at the top compares auctions that were extended with ones that were not.
+
+## <img src="docs/assets/icons/start.svg" width="26" height="26" alt=""> Demo video and pitch
+
+[![Watch the 3 minute 43 second demo video](docs/demo/poster.jpg)](docs/demo/demo.mp4)
+
+**[▶ Watch the demo video](docs/demo/demo.mp4)** (3:43, 1080p, no sound). It is a real recording of the live app: nothing is faked or edited together. It has short chapter labels at the top so you always know what part you are watching.
+
+![The moment a late bid extends the auction](docs/demo/preview.gif)
+
+<sub>The moment a late bid extends the auction: the countdown jumps, the timeline grows, and the log says why.</sub>
+
+| Time | Chapter | What you see |
+| --- | --- | --- |
+| 0:00 | Intro | The idea in one line |
+| 0:11 | The idea | The auction list: lowest bid, close time, status |
+| 0:38 | Is it working? | Bids per RFQ and the price won in extra time |
+| 0:51 | Create an RFQ | The form, a rule error on purpose, the live timeline preview |
+| 1:30 | A live auction | Countdown, timeline, ranking L1 to L4, price chart |
+| 1:59 | A late bid extends the clock | A real bid inside the trigger window, +10 minutes, with the reason |
+| 2:24 | Not every bid extends | A bid that improves a rank but does not change L1: no extension |
+| 2:43 | The rules are enforced | A supplier tries to raise its price and is rejected |
+| 2:57 | The forced close | An auction that hit its hard stop: one extension cut short, one refused |
+| 3:24 | Wrap-up | Tests, accessibility, security, and the links |
+
+**Want to present it yourself?** There is no AI voice on purpose. [`docs/demo/VOICEOVER.md`](docs/demo/VOICEOVER.md) has:
+
+- the exact words to say in each scene, with the second it starts,
+- what is on screen at the same moment,
+- a 30-second and a 60-second version of the pitch,
+- 12 questions people usually ask, each with a short answer,
+- the one command that puts your voice on the video.
+
+The video is made by a script, so it can be recorded again after any change: see the end of that page.
 
 ## <img src="docs/assets/icons/map.svg" width="26" height="26" alt=""> What it looks like
 
@@ -309,6 +343,7 @@ More detail: [`docs/HLD.md`](docs/HLD.md) (architecture and trade-offs), [`docs/
 | Speed: one bid when an auction already has 3,000 bids | about **13 ms** |
 | Page data size with 3,000 bids | about **330 KB** (it was 1.5 MB before it was capped) |
 | Hard inputs: 60 bids at once, strange numbers, SQL and HTML in names | All handled correctly |
+| Demo video (`scripts/demo`): a real browser, real clock, recorded in one take | 3:43, 1080p |
 
 The end-to-end script is worth a look: it does not fake the clock. It starts real auctions with short windows and waits, so it proves the extensions work in real time.
 
@@ -403,7 +438,9 @@ frontend/
   src/components/   timeline, ranking table, chart, bid form, activity log
   src/test/         component tests
 docs/               HLD, schema, API, images
-scripts/            end-to-end check and accessibility scan
+docs/demo/          demo video, preview GIF, voice-over script and pitch kit
+scripts/            end-to-end check, accessibility scan
+scripts/demo/       the script that records the demo video
 render.yaml         one-click hosting setup
 ```
 

@@ -260,7 +260,7 @@ export class AuctionService {
         throw new AppError(
           'BID_NOT_LOWER', 422,
           `Your new total (${money(tot, r.currency)}) must be lower than your current bid (${money(prev.t, r.currency)})`,
-          { freightCharges: ['A British auction only accepts bids that lower your previous total'] },
+          { freightCharges: ['Must be lower than your last bid'] },
         );
 
       const old = this.bestOf(r.id);
