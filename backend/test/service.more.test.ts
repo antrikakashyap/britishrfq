@@ -44,4 +44,12 @@ describe('service details', () => {
     expect(k.svc.settleAll()).toBe(1);
     expect(k.svc.settleAll()).toBe(0);
   });
+
+  it('returns zeros in the metrics when there are no auctions', () => {
+    const k = mkSvc();
+    const m = k.svc.metrics();
+    expect(m.auctions.total).toBe(0);
+    expect(m.bids).toEqual({ total: 0, avgPerRfq: 0 });
+    expect(m.comparison.extended.avgBidsPerRfq).toBeNull();
+  });
 });
