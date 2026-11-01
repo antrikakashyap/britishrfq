@@ -37,4 +37,11 @@ describe('service details', () => {
     const d = k.svc.createRfq(rfqBody({ bidStart: isoAt(9) }));
     expect(d.auction.status).toBe('ACTIVE');
   });
+
+  it('settles time-driven changes only once', () => {
+    const k = open();
+    k.set(at(18, 30));
+    expect(k.svc.settleAll()).toBe(1);
+    expect(k.svc.settleAll()).toBe(0);
+  });
 });
