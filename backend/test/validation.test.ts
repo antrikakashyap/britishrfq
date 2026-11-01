@@ -35,4 +35,9 @@ describe('input validation', () => {
     expect(r.success).toBe(false);
     if (!r.success) expect(Object.keys(fieldErrors(r.error)).sort()).toEqual(['extensionMin', 'triggerWindowMin']);
   });
+
+  it('allows a trigger window as long as the whole bidding period', () => {
+    const v = { bidStart: at(10), bidClose: at(11), forcedBidClose: at(12), triggerWindowMin: 60 };
+    expect(timelineErrors(v, at(9))).toEqual({});
+  });
 });
