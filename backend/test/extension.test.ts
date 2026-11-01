@@ -39,4 +39,8 @@ describe('extension edge cases', () => {
       expect(e).toMatchObject({ outcome: 'BLOCKED', newCloseMs: at(19) });
     }
   });
+
+  it('reports where the trigger window starts', () => {
+    expect(evalExtension({ ...base, trig: 'BID_RECEIVED' }).windowStartMs).toBe(at(17, 50));
+  });
 });
