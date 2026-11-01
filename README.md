@@ -6,7 +6,7 @@
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-open%20the%20app-0a6c6c?style=for-the-badge&logo=render&logoColor=white)](https://british-auction-rfq-3cc2.onrender.com)
 [![CI](https://img.shields.io/github/actions/workflow/status/abhishekisagemai-bot/britishrfq/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white)](https://github.com/abhishekisagemai-bot/britishrfq/actions)
-[![Tests](https://img.shields.io/badge/tests-60%20passing-2ec866?style=for-the-badge)](#how-it-was-checked)
+[![Tests](https://img.shields.io/badge/tests-119%20passing-2ec866?style=for-the-badge)](#how-it-was-checked)
 [![TypeScript](https://img.shields.io/badge/TypeScript-React%20%2B%20Node-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](#the-tech)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2a900?style=for-the-badge)](LICENSE)
 
@@ -330,12 +330,14 @@ Yes. This table maps each line of the brief to the code and the check that prove
 
 More detail: [`docs/HLD.md`](docs/HLD.md) (architecture and trade-offs), [`docs/SCHEMA.md`](docs/SCHEMA.md) (database, with a diagram), [`docs/API.md`](docs/API.md) (every endpoint).
 
+Also: [glossary](docs/GLOSSARY.md), [FAQ](docs/FAQ.md), [decision records](docs/adr/README.md), [testing guide](docs/TESTING.md), [deployment guide](docs/DEPLOYMENT.md), [troubleshooting](docs/TROUBLESHOOTING.md), [roadmap](docs/ROADMAP.md) and the [changelog](CHANGELOG.md).
+
 ## <img src="docs/assets/icons/results.svg" width="26" height="26" alt=""> How it was checked
 
 | Check | Result |
 | --- | --- |
-| Backend tests: rules to the millisecond, services, REST API, scale | **42 passing** |
-| Frontend tests: timeline, ranking table, activity log, chart, bid form, list, create form | **18 passing** |
+| Backend tests: rules to the millisecond, services, REST API, scale | **90 passing** |
+| Frontend tests: timeline, ranking table, activity log, chart, bid form, list, create form | **29 passing** |
 | **Real-clock end-to-end run** (`npm run e2e`): creates auctions that really run for about 3.5 minutes and checks all three triggers, the cap, a refused extension, a force close, and the list and detail pages | **39 of 39 checks pass** |
 | Accessibility scan (axe, WCAG 2.1 A and AA) on every page, desktop and phone | **0 violations** |
 | Dependency security audit (`npm audit`) | **0 vulnerabilities** |
@@ -396,7 +398,7 @@ Then open **<http://localhost:5173>**. The first start creates 7 demo auctions f
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Starts the API on port 8080 and the website on port 5173, with auto-reload |
-| `npm test` | Runs all 60 tests |
+| `npm test` | Runs all 119 tests |
 | `npm run typecheck` | Checks the TypeScript types |
 | `npm run build` | Builds everything for production |
 | `npm start` | Runs the production build on <http://localhost:8080> (API and website together) |
