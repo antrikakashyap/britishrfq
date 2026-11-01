@@ -39,7 +39,7 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
       }),
     );
 
-  api.get('/health', wrap(() => ({ status: 'ok', time: new Date(svc.now()).toISOString() })));
+  api.get('/health', wrap(() => ({ status: 'ok', time: new Date(svc.now()).toISOString(), uptimeSec: Math.round(process.uptime()) })));
   api.get('/meta', wrap(() => ({ demo, serverTime: new Date(svc.now()).toISOString() })));
   api.get('/time', wrap(() => ({ serverTime: new Date(svc.now()).toISOString() })));
   api.get('/metrics', wrap(() => svc.metrics()));
