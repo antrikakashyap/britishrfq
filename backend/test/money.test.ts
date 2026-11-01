@@ -7,4 +7,9 @@ describe('money', () => {
     expect(toCents(0)).toBe(0);
     expect(toCents(1000)).toBe(100000);
   });
+
+  it('turns whole cents back into decimals', () => {
+    expect(fromCents(1999)).toBe(19.99);
+    expect(fromCents(5)).toBe(0.05);
+  });
 });
