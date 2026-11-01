@@ -24,4 +24,12 @@ describe('REST API details', () => {
     expect(r.body.map((a: { refId: string }) => a.refId)).toEqual(['RFQ-T-2']);
     expect((await api.get('/api/auctions?status=ACTIVE')).body.map((a: { refId: string }) => a.refId)).toEqual(['RFQ-T-1']);
   });
+
+  it('searches by name or reference, ignoring letter case', async () => {
+    const { api } = boot();
+    await api.post('/api/auctions').send(rfqBody({ name: 'Mumbai lane' }));
+    await api.post('/api/auctions').send(rfqBody({ refId: 'RFQ-T-2', name: 'Chennai lane' }));
+    expect((await api.get('/api/auctions?q=MUMBAI')).body).toHaveLength(1);
+    expect((await api.get('/api/auctions?q=rfq-t-2')).body[0].name).toBe('Chennai lane');
+  });
 });
