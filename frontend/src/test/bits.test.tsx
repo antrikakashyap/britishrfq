@@ -9,4 +9,15 @@ describe('small components', () => {
     const { container } = render(<>{(['SCHEDULED', 'ACTIVE', 'CLOSED', 'FORCE_CLOSED'] as const).map((s) => <StatusBadge key={s} s={s} />)}</>);
     expect([...container.querySelectorAll('.badge')].map((b) => b.textContent?.trim())).toEqual(['Scheduled', 'Active', 'Closed', 'Force closed']);
   });
+
+  it('shows a toast with its title and body, in a polite live region', () => {
+    const Press = () => {
+      const toast = useToast();
+      return <button onClick={() => toast('Saved', 'All good')}>go</button>;
+    };
+    render(<ToastHost><Press /></ToastHost>);
+    fireEvent.click(screen.getByText('go'));
+    expect(screen.getByText('Saved')).toBeTruthy();
+    expect(screen.getByRole('status').getAttribute('aria-live')).toBe('polite');
+  });
 });
