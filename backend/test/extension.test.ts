@@ -12,4 +12,9 @@ describe('extension edge cases', () => {
     expect(evalExtension({ ...t, nowMs: at(17, 59) }).outcome).toBe('EXTENDED');
     expect(evalExtension({ ...t, nowMs: at(17, 58, 59) }).inWindow).toBe(false);
   });
+
+  it('caps the close when Y is bigger than the room left', () => {
+    const e = evalExtension({ ...base, trig: 'BID_RECEIVED', extMin: 120 });
+    expect(e).toMatchObject({ outcome: 'CAPPED', newCloseMs: at(19) });
+  });
 });
