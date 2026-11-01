@@ -29,4 +29,10 @@ describe('input validation', () => {
     expect(r.success).toBe(true);
     if (r.success) expect(r.data.currency).toBe('USD');
   });
+
+  it('collects every field error, grouped by field name', () => {
+    const r = createSchema.safeParse(rfqBody({ triggerWindowMin: 0, extensionMin: 0 }));
+    expect(r.success).toBe(false);
+    if (!r.success) expect(Object.keys(fieldErrors(r.error)).sort()).toEqual(['extensionMin', 'triggerWindowMin']);
+  });
 });
