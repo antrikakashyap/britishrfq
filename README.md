@@ -421,4 +421,4 @@ Stated plainly, so you know what this is and is not.
 
 [MIT](LICENSE). Use it, learn from it, change it.
 
-Built by **Abhishek Kumar**. The assignment brief is "British Auction in RFQ System".
+Built by **Antrika Kashyap**. The assignment brief is "British Auction in RFQ System".
