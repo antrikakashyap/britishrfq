@@ -7,4 +7,11 @@ describe('ranking', () => {
   it('returns an empty ranking for no bids', () => {
     expect(rankBids([])).toEqual([]);
   });
+
+  it('ranks a single supplier as L1', () => {
+    const r = rankBids([b(1, 7, 500)]);
+    expect(r).toHaveLength(1);
+    expect(r[0]).toMatchObject({ supId: 7, rank: 1 });
+    expect(rankLabel(r[0]!.rank)).toBe('L1');
+  });
 });
