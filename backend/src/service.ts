@@ -372,7 +372,7 @@ export class AuctionService {
            ORDER BY b.total_cents, b.created_ms, b.id LIMIT 1) AS lowName
        FROM rfqs`,
     );
-    const q = opts.q?.trim().toLowerCase();
+    const q = opts.q?.trim().toLowerCase().slice(0, LIMITS.searchMax);
     const wt = (s: Status) => (s === 'ACTIVE' ? 0 : s === 'SCHEDULED' ? 1 : 2);
     return rows
       .filter((r) => !opts.status || opts.status === 'ALL' || r.status === opts.status)
