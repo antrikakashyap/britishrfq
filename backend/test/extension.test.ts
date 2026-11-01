@@ -22,4 +22,9 @@ describe('extension edge cases', () => {
     const e = evalExtension({ ...base, trig: 'ANY_RANK_CHANGE', before: rk([1, 100]), after: rk([1, 100], [2, 200]) });
     expect(e).toMatchObject({ fired: true, outcome: 'EXTENDED' });
   });
+
+  it('does not treat a new supplier below the leader as an L1 change', () => {
+    const e = evalExtension({ ...base, trig: 'L1_CHANGE', before: rk([1, 100]), after: rk([1, 100], [2, 200]) });
+    expect(e).toMatchObject({ inWindow: true, fired: false, outcome: 'NONE' });
+  });
 });
