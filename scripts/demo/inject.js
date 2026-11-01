@@ -62,7 +62,7 @@
       if (!kind) { card.classList.remove('on'); card.classList.remove('go'); return; }
       card.innerHTML = kind === 'title'
         ? `<div class="in"><div class="logo">${LOGO}<span>RFQ platform</span></div><h1>British Auction RFQ</h1><p class="tag">Suppliers compete in the open. Late bids add time. A forced close keeps it fair.</p><div class="strip"><i></i><em></em></div></div>`
-        : `<div class="in"><div class="logo">${LOGO}<span>British Auction RFQ</span></div><h1 style="font-size:70px">Every rule, tested.</h1><div class="stats"><div><b>60</b><span>automated tests</span></div><div><b>39</b><span>real-time end-to-end checks</span></div><div><b>0</b><span>accessibility violations</span></div><div><b>0</b><span>security vulnerabilities</span></div></div><div class="links">Live: <b>british-auction-rfq-3cc2.onrender.com</b><br>Code: <b>github.com/abhishekisagemai-bot/britishrfq</b></div></div>`;
+        : `<div class="in"><div class="logo">${LOGO}<span>British Auction RFQ</span></div><h1 style="font-size:70px">Every rule, tested.</h1><div class="stats"><div><b>60</b><span>automated tests</span></div><div><b>39</b><span>real-time end-to-end checks</span></div><div><b>0</b><span>accessibility violations</span></div><div><b>0</b><span>security vulnerabilities</span></div></div><div class="links">Live: <b>british-auction-rfq-3cc2.onrender.com</b><br>Code: <b>github.com/antrikakashyap/britishrfq</b></div></div>`;
       requestAnimationFrame(() => card.classList.add('on'));
     },
   };

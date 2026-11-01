@@ -5,7 +5,7 @@
 **A freight-quote platform where suppliers compete in the open, late bids add extra time, and a hard stop keeps the auction fair.**
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-open%20the%20app-0a6c6c?style=for-the-badge&logo=render&logoColor=white)](https://british-auction-rfq-3cc2.onrender.com)
-[![CI](https://img.shields.io/github/actions/workflow/status/abhishekisagemai-bot/britishrfq/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white)](https://github.com/abhishekisagemai-bot/britishrfq/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/antrikakashyap/britishrfq/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white)](https://github.com/antrikakashyap/britishrfq/actions)
 [![Tests](https://img.shields.io/badge/tests-119%20passing-2ec866?style=for-the-badge)](#how-it-was-checked)
 [![TypeScript](https://img.shields.io/badge/TypeScript-React%20%2B%20Node-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](#the-tech)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2a900?style=for-the-badge)](LICENSE)
@@ -387,7 +387,7 @@ If your reading of the brief is different, each of these rules lives in one smal
 You need **Node 22.13 or newer**. Nothing else (no database server).
 
 ```bash
-git clone https://github.com/abhishekisagemai-bot/britishrfq.git
+git clone https://github.com/antrikakashyap/britishrfq.git
 cd britishrfq
 npm install
 npm run dev
