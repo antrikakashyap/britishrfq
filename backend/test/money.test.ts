@@ -12,4 +12,8 @@ describe('money', () => {
     expect(fromCents(1999)).toBe(19.99);
     expect(fromCents(5)).toBe(0.05);
   });
+
+  it('accepts amounts with at most two decimals', () => {
+    for (const n of [0, 10, 10.5, 10.55, 123456.78]) expect(isMoney(n)).toBe(true);
+  });
 });
