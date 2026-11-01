@@ -88,6 +88,7 @@ erDiagram
 |---|---|
 | `idx_bids_rfq_total (rfq_id, total_cents, created_ms)` | leaderboard / lowest-bid lookups |
 | `idx_bids_rfq_sup (rfq_id, supplier_id, created_ms)` | "this supplier's previous bid" check |
+| `idx_bids_best (rfq_id, supplier_id, total_cents, created_ms)` | a supplier's best bid: the only rows ranking needs |
 | `idx_log_rfq (rfq_id, created_ms, id)` | activity log in order |
 | `idx_rfqs_status (status, bid_close_ms)` | sweeper & listing filters |
 

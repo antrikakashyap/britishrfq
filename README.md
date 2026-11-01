@@ -25,7 +25,7 @@ npm run dev          # API on :8080, web on http://localhost:5173  (seeds 7 demo
 ```
 
 ```bash
-npm test             # 39 backend + 4 frontend tests
+npm test             # 42 backend + 18 frontend tests
 npm run build && npm start   # single process: API + built UI on http://localhost:8080
 docker compose up --build    # same, containerised, data persisted in a volume
 npm run seed         # reset the demo data
@@ -113,14 +113,25 @@ docs/      HLD.md · SCHEMA.md · API.md · img/ · screenshots/
 
 Configuration (env): `PORT` (8080), `DB_PATH` (`backend/data/rfq.db`), `ENABLE_DEMO` (`1` shows the "Simulate a rival bid" helper and seeds an empty DB; default on outside production), `WEB_DIR`.
 
+## Quality bar
+
+| Check | Result |
+|---|---|
+| Backend tests (rules to the millisecond, service, REST, randomised ranking property test, scale caps) | 42 passing |
+| Frontend tests (React Testing Library: timeline, leaderboard, activity, chart, bid form, listing, create-form validation) | 18 passing |
+| Live real-clock end-to-end (`npm run e2e`): 3 triggers, cap, blocked, force close, listing/details, SSE | 39 checks |
+| Accessibility: axe-core WCAG 2.1 A/AA on every page, desktop + mobile (`scripts/a11y.cjs`) | 0 violations |
+| `npm audit` | 0 vulnerabilities |
+| Bid cost at 3,000 bids on one RFQ (ranks each supplier's best bid only) | about 13 ms including the full response, about 4x faster than ranking every bid |
+| Details payload at 3,000 bids (bids table capped at 200 with "Show all", complete price history) | about 330 KB, was 1.5 MB |
+
 ## Known limitations (honest list)
 
-* **No authentication.** Any caller can create RFQs and bid under any carrier name. Role-based auth (buyer / supplier users) is the first production step.
+* **No authentication.** Any caller can create RFQs and bid under any carrier name. The brief does not ask for it; buyer / supplier user accounts are the first production step.
 * **Single node.** SQLite + in-process event bus + 1 s sweeper. Fine for one instance; see `docs/HLD.md` section 6 for the Postgres / pub-sub path.
-* **Ranking cost grows with bid count** (all bids of an RFQ are re-ranked on each bid): about 5 ms at 500 bids, about 50 ms at 3,000. The details endpoint is not paginated.
 * **No buyer award / cancel / edit flow.** The brief covers bidding, extension and visibility only.
 * **Free-tier hosting resets data** on redeploy and sleeps when idle.
-* **Dependency audit:** `zod@3` and `react-router@6` have advisories (not reachable here: no array schemas, no SSR), and `vitest@3` is dev-only. Upgrading means a major-version migration.
+* **Docker image and GitHub Actions** are written but were never executed by the author (no daemon in the build sandbox); the image's runtime stage was simulated with production-only dependencies.
 
 ## License
 

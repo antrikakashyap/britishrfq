@@ -141,6 +141,17 @@ export class AuctionService {
     );
   }
 
+  /** Each supplier's best bid only (one row per supplier): all that ranking needs, O(suppliers) not O(bids). */
+  private bestOf(rfqId: number): BidRow[] {
+    return this.all<BidRow>(
+      `SELECT ${BID_COLS} FROM bids b JOIN suppliers s ON s.id = b.supplier_id
+       WHERE b.rfq_id = ? AND b.id = (
+         SELECT b2.id FROM bids b2 WHERE b2.rfq_id = b.rfq_id AND b2.supplier_id = b.supplier_id
+         ORDER BY b2.total_cents, b2.created_ms, b2.id LIMIT 1)`,
+      rfqId,
+    );
+  }
+
   /* ------------------------------------------------------ lifecycle */
 
   /**
@@ -156,7 +167,7 @@ export class AuctionService {
       let closedMs: number | null = null;
       if (want === 'CLOSED' || want === 'FORCE_CLOSED') {
         closedMs = r.closeMs;
-        const bids = this.bidsOf(r.id);
+        const bids = this.bestOf(r.id);
         const top = rankBids(bids)[0];
         const who = top ? ` Winning bid: ${bids.find((b) => b.id === top.id)?.name} at ${money(top.total, r.currency)} (L1).` : ' No bids were received.';
         if (want === 'FORCE_CLOSED')
@@ -252,7 +263,7 @@ export class AuctionService {
           { freightCharges: ['A British auction only accepts bids that lower your previous total'] },
         );
 
-      const old = this.bidsOf(r.id);
+      const old = this.bestOf(r.id);
       const before = rankBids(old);
       const bid = this.run(
         `INSERT INTO bids (rfq_id, supplier_id, freight_cents, origin_cents, destination_cents, transit_days, validity_days, created_ms)
@@ -393,15 +404,34 @@ export class AuctionService {
     };
   }
 
-  details(key: string) {
+  /**
+   * Full auction view. `bids` caps the "all bids by price" table (default 200, "all" = no cap) and
+   * activity is capped to the newest 300 lines, so the payload stays small however busy the auction is.
+   * Ranking, counts and the price history are always complete.
+   */
+  details(key: string, opts: { bids?: number | 'all' } = {}) {
     let r = this.find(key);
     const now = this.now();
     r = this.settleRow(r, now);
-    const bids = this.bidsOf(r.id);
-    const rank = rankBids(bids);
+    const best = this.bestOf(r.id);
+    const rank = rankBids(best);
     const rk = new Map(rank.map((x) => [x.supId, x.rank]));
-    const per = new Map<number, number>();
-    for (const b of bids) per.set(b.supId, (per.get(b.supId) ?? 0) + 1);
+    const cur = new Set(rank.map((x) => x.id));
+    const per = new Map(
+      this.all<{ sid: number; n: number }>('SELECT supplier_id AS sid, COUNT(*) AS n FROM bids WHERE rfq_id = ? GROUP BY supplier_id', r.id).map((x) => [x.sid, x.n]),
+    );
+    const total = this.one<{ n: number }>('SELECT COUNT(*) AS n FROM bids WHERE rfq_id = ?', r.id)!.n;
+    const cap = opts.bids === 'all' ? -1 : Math.min(Math.max(opts.bids ?? 200, 1), 5000);
+    const rows = this.all<BidRow>(
+      `SELECT ${BID_COLS} FROM bids b JOIN suppliers s ON s.id = b.supplier_id WHERE b.rfq_id = ?
+       ORDER BY b.total_cents, b.created_ms, b.id LIMIT ?`,
+      r.id, cap,
+    );
+    const hist = this.all<{ name: string; total: number; atMs: number }>(
+      `SELECT s.name AS name, b.total_cents AS total, b.created_ms AS atMs FROM bids b JOIN suppliers s ON s.id = b.supplier_id
+       WHERE b.rfq_id = ? ORDER BY b.created_ms DESC, b.id DESC LIMIT 1500`,
+      r.id,
+    ).reverse();
 
     const dto = (b: BidRow) => ({
       bidId: b.id,
@@ -416,15 +446,17 @@ export class AuctionService {
       submittedAt: iso(b.atMs),
     });
     const topId = rank[0]?.id;
+    const logTotal = this.one<{ n: number }>('SELECT COUNT(*) AS n FROM activity_log WHERE rfq_id = ?', r.id)!.n;
     const logs = this.all<{
       id: number; kind: string; message: string; reason: string | null; name: string | null;
       oldMs: number | null; newMs: number | null; at: number;
     }>(
       `SELECT l.id, l.kind, l.message, l.reason, s.name AS name, l.old_close_ms AS oldMs, l.new_close_ms AS newMs, l.created_ms AS at
-       FROM activity_log l LEFT JOIN suppliers s ON s.id = l.supplier_id WHERE l.rfq_id = ? ORDER BY l.created_ms, l.id`,
+       FROM activity_log l LEFT JOIN suppliers s ON s.id = l.supplier_id WHERE l.rfq_id = ?
+       ORDER BY l.created_ms DESC, l.id DESC LIMIT 300`,
       r.id,
-    );
-    const low = rank[0] ? bids.find((b) => b.id === rank[0]!.id)! : undefined;
+    ).reverse();
+    const low = rank[0] ? best.find((b) => b.id === rank[0]!.id)! : undefined;
     return {
       serverTime: iso(now),
       auction: {
@@ -441,16 +473,18 @@ export class AuctionService {
         forcedBidClose: iso(r.forcedMs),
         extensionCount: r.extCount,
         totalExtendedMin: Math.round((r.closeMs - r.origMs) / MIN_MS),
-        bidCount: bids.length,
+        bidCount: total,
         supplierCount: rank.length,
         lowestBid: low ? { total: fromCents(low.total), carrierName: low.name } : null,
         config: this.cfg(r),
       },
       ranking: rank.map((x) => {
-        const b = bids.find((y) => y.id === x.id)!;
+        const b = best.find((y) => y.id === x.id)!;
         return { rank: x.rank, label: rankLabel(x.rank), ...dto(b), bidsPlaced: per.get(x.supId) ?? 1, isLowest: x.id === topId };
       }),
-      bids: [...bids].sort(byPrice).map((b) => ({ ...dto(b), supplierRank: rk.get(b.supId)!, isCurrent: rank.some((x) => x.id === b.id) })),
+      bids: rows.map((b) => ({ ...dto(b), supplierRank: rk.get(b.supId)!, isCurrent: cur.has(b.id) })),
+      bidsTotal: total,
+      history: hist.map((h) => ({ carrierName: h.name, total: fromCents(h.total), submittedAt: iso(h.atMs) })),
       activity: logs.map((l) => ({
         id: l.id,
         kind: l.kind,
@@ -461,6 +495,7 @@ export class AuctionService {
         newClose: l.newMs == null ? null : iso(l.newMs),
         at: iso(l.at),
       })),
+      activityTotal: logTotal,
     };
   }
 

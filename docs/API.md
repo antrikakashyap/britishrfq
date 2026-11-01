@@ -17,14 +17,16 @@ Errors always look like:
 | `AUCTION_NOT_STARTED` | 409 | bid before bid start |
 | `AUCTION_CLOSED` | 409 | bid at/after the current close (incl. force-closed) |
 | `BID_NOT_LOWER` | 422 | supplier's new total is not lower than its own previous total |
-| `RATE_LIMITED` | 429 | too many writes from one IP |
+| `RATE_LIMITED` | 429 / 503 | too many writes from one IP / too many live connections |
+| `PAYLOAD_TOO_LARGE` | 413 | body over 32 KB |
+| `BAD_REQUEST` | 400 | malformed URL or request |
 
 | Method & path | Purpose |
 |---|---|
 | `GET /health`, `GET /time`, `GET /meta` | liveness, server clock, `{demo}` flag |
 | `GET /auctions?status=ALL\|ACTIVE\|SCHEDULED\|CLOSED\|FORCE_CLOSED&q=` | **Auction listing**: RFQ name/ID, current lowest bid, current bid close, forced close, status |
 | `POST /auctions` | **Create RFQ** with British auction config |
-| `GET /auctions/:refId` | **Auction details**: auction + config (X, Y, trigger), ranking (L1…), all bids by price, activity log |
+| `GET /auctions/:refId?bids=200\|all` | **Auction details**: auction + config (X, Y, trigger), ranking (L1…), bids by price (default first 200, `bids=all` for everything, `bidsTotal` gives the count), full price `history`, activity log (latest 300, `activityTotal`) |
 | `POST /auctions/:refId/bids` | **Submit quote**; returns rank and the extension outcome |
 | `GET /metrics` | success metrics: bids per RFQ and price improvement, extended vs non-extended |
 | `GET /events` | Server-Sent Events: `created`, `bid`, `extended`, `status` |

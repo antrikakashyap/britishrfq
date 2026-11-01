@@ -2,6 +2,11 @@ import { z } from 'zod';
 import { isMoney } from './money.js';
 import { MIN_MS, TRIGGERS } from './types.js';
 
+/** zod 4: one message for a missing value, another for a wrong type */
+const need = (label: string, kind = 'text') => ({
+  error: (i: { input?: unknown }) => (i.input === undefined ? `${label} is required` : `${label} must be ${kind}`),
+});
+
 export const CURRENCIES = ['USD', 'EUR', 'GBP', 'INR', 'AED', 'SGD'] as const;
 
 const ISO_DT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/;
@@ -10,7 +15,7 @@ const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 /** date-time WITH timezone -> epoch ms. A zone-less string is ambiguous, so we refuse it. */
 const instant = (label: string) =>
   z
-    .string({ required_error: `${label} is required`, invalid_type_error: `${label} is required` })
+    .string(need(label))
     .trim()
     .refine((s) => ISO_DT.test(s) && !Number.isNaN(Date.parse(s)), {
       message: `${label} must be an ISO-8601 date-time with timezone, e.g. 2026-11-05T18:00:00Z`,
@@ -18,7 +23,7 @@ const instant = (label: string) =>
     .transform((s) => Date.parse(s));
 
 const pickup = z
-  .string({ required_error: 'Pickup / service date is required', invalid_type_error: 'Pickup / service date is required' })
+  .string(need('Pickup / service date'))
   .trim()
   .refine((s) => (ISO_DT.test(s) || ISO_DAY.test(s)) && !Number.isNaN(Date.parse(s)), {
     message: 'Pickup / service date must be an ISO date (YYYY-MM-DD) or date-time',
@@ -27,19 +32,19 @@ const pickup = z
 
 const whole = (label: string, min: number, max: number) =>
   z
-    .number({ required_error: `${label} is required`, invalid_type_error: `${label} must be a number` })
+    .number(need(label, 'a number'))
     .int(`${label} must be a whole number`)
     .min(min, `${label} must be at least ${min}`)
     .max(max, `${label} must be at most ${max}`);
 
 export const createSchema = z.object({
   refId: z
-    .string({ required_error: 'RFQ reference ID is required' })
+    .string(need('RFQ reference ID'))
     .trim()
     .min(3, 'RFQ reference ID must be at least 3 characters')
     .max(40, 'RFQ reference ID must be at most 40 characters')
     .regex(/^[A-Za-z0-9][A-Za-z0-9._/-]*$/, 'Use letters, digits and . _ / - only'),
-  name: z.string({ required_error: 'RFQ name is required' }).trim().min(3, 'RFQ name must be at least 3 characters').max(120),
+  name: z.string(need('RFQ name')).trim().min(3, 'RFQ name must be at least 3 characters').max(120),
   description: z.string().trim().max(1000).optional(),
   currency: z.enum(CURRENCIES).default('USD'),
   pickupDate: pickup,
@@ -48,20 +53,20 @@ export const createSchema = z.object({
   forcedBidClose: instant('Forced bid close'),
   triggerWindowMin: whole('Trigger window (X)', 1, 1440),
   extensionMin: whole('Extension duration (Y)', 1, 1440),
-  triggerType: z.enum(TRIGGERS, { errorMap: () => ({ message: 'Choose an extension trigger' }) }),
+  triggerType: z.enum(TRIGGERS, { error: 'Choose an extension trigger' }),
 });
 export type CreateInput = z.infer<typeof createSchema>;
 
 const money = (label: string) =>
   z
-    .number({ required_error: `${label} is required`, invalid_type_error: `${label} must be a number` })
+    .number(need(label, 'a number'))
     .min(0, `${label} cannot be negative`)
     .max(1_000_000_000, `${label} is too large`)
     .refine(isMoney, `${label} can have at most 2 decimal places`);
 
 export const bidSchema = z
   .object({
-    carrierName: z.string({ required_error: 'Carrier name is required' }).trim().min(1, 'Carrier name is required').max(80),
+    carrierName: z.string(need('Carrier name')).trim().min(1, 'Carrier name is required').max(80),
     freightCharges: money('Freight charges'),
     originCharges: money('Origin charges'),
     destinationCharges: money('Destination charges'),

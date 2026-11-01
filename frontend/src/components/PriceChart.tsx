@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
-import type { BidRow, LogRow } from '../api';
+import type { LogRow } from '../api';
 import { useWidth } from '../hooks';
 import { money, time } from '../lib/format';
-import { supplierColors } from './bits';
+import { DASHES, seriesIndex, supplierColors } from './bits';
 
 interface Pt { x: number; y: number; carrier: string; at: number; total: number }
 
 /** Each supplier's quote over time (step lines): shows who undercut whom and when the clock was extended. */
-export default function PriceChart({ bids, activity, cur }: { bids: BidRow[]; activity: LogRow[]; cur: string }) {
+type H = { carrierName: string; total: number; submittedAt: string };
+export default function PriceChart({ bids, activity, cur }: { bids: H[]; activity: LogRow[]; cur: string }) {
   const [ref, w] = useWidth<HTMLDivElement>();
   const [hot, setHot] = useState<Pt | null>(null);
   const colors = useMemo(() => supplierColors(bids), [bids]);
@@ -75,7 +76,7 @@ export default function PriceChart({ bids, activity, cur }: { bids: BidRow[]; ac
             const last = v[v.length - 1]!;
             return (
               <g key={n}>
-                <path d={d + ` H${X(t1)}`} fill="none" stroke={c} strokeWidth={2} strokeLinejoin="round" opacity={hot && hot.carrier !== n ? 0.35 : 1} />
+                <path d={d + ` H${X(t1)}`} fill="none" stroke={c} strokeWidth={2} strokeLinejoin="round" strokeDasharray={DASHES[seriesIndex(c)] || undefined} opacity={hot && hot.carrier !== n ? 0.35 : 1} />
                 {v.map((p) => <circle key={p.at} cx={X(p.at)} cy={Y(p.total)} r={4} fill={c} stroke="var(--surf)" strokeWidth={2} />)}
                 {direct && <text x={w - mr + 10} y={(ends.find((e) => e.n === n)?.y ?? Y(last.total)) + 4} style={{ fill: 'var(--ink)', fontWeight: 600 }}>{n.length > 15 ? n.slice(0, 14) + '…' : n}</text>}
               </g>

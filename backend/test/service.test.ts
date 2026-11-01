@@ -215,6 +215,47 @@ describe('list & metrics', () => {
   });
 });
 
+describe('scale', () => {
+  it('ranking from per-supplier best bids equals brute-force ranking over ALL bids (randomised)', () => {
+    const k = setup({ triggerType: 'ANY_RANK_CHANGE' });
+    k.set(at(12));
+    const best = new Map<string, number>();
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    for (let i = 0; i < 400; i++) {
+      const who = 'Sup ' + Math.floor(rnd() * 25);
+      const cur = best.get(who) ?? 100000;
+      const tot = Math.max(1, cur - Math.ceil(rnd() * 500));
+      k.set(at(12) + i * 1000);
+      k.svc.placeBid('RFQ-T-1', bidBody(who, tot));
+      best.set(who, tot);
+    }
+    const d = k.svc.details('RFQ-T-1', { bids: 'all' });
+    const expect_ = [...best.entries()].sort((a, b) => a[1] - b[1]).map(([n]) => n);
+    expect(d.ranking.map((r) => r.carrierName).slice(0, 5)).toEqual(expect_.slice(0, 5));
+    expect(d.ranking.length).toBe(best.size);
+    expect(d.bids.length).toBe(400);
+    expect(d.bidsTotal).toBe(400);
+  });
+
+  it('caps the bids table (default 200) but keeps counts and the price history complete', () => {
+    const k = setup();
+    k.set(at(12));
+    for (let i = 0; i < 260; i++) {
+      k.set(at(12) + i * 1000);
+      k.svc.placeBid('RFQ-T-1', bidBody('Carrier ' + (i % 13), 90000 - i * 10));
+    }
+    const d = k.svc.details('RFQ-T-1');
+    expect(d.bids.length).toBe(200);
+    expect(d.bidsTotal).toBe(260);
+    expect(d.auction.bidCount).toBe(260);
+    expect(d.history.length).toBe(260);
+    expect(d.bids.map((b) => b.total)).toEqual([...d.bids.map((b) => b.total)].sort((a, b) => a - b));
+    expect(k.svc.details('RFQ-T-1', { bids: 10 }).bids.length).toBe(10);
+    expect(k.svc.details('RFQ-T-1', { bids: 'all' }).bids.length).toBe(260);
+  });
+});
+
 describe('demo seed', () => {
   it('builds history through the real code paths and respects every invariant', () => {
     const k = mkSvc();

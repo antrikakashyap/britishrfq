@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS bids (
 -- leaderboard / ranking scan + "previous bid of this supplier" lookup
 CREATE INDEX IF NOT EXISTS idx_bids_rfq_total ON bids (rfq_id, total_cents, created_ms);
 CREATE INDEX IF NOT EXISTS idx_bids_rfq_sup   ON bids (rfq_id, supplier_id, created_ms);
+-- a supplier's best bid (ranking) = first row of this index per (rfq, supplier)
+CREATE INDEX IF NOT EXISTS idx_bids_best      ON bids (rfq_id, supplier_id, total_cents, created_ms);
 
 -- ---------------------------------------------------------------------
 --  activity_log : append-only audit trail shown on the details page

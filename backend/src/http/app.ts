@@ -45,7 +45,10 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
 
   api.get('/auctions', wrap((q) => svc.list({ status: String(q.query['status'] ?? ''), q: String(q.query['q'] ?? '') })));
   api.post('/auctions', (q, s) => s.status(201).json(svc.createRfq(q.body)));
-  api.get('/auctions/:key', wrap((q) => svc.details(key(q))));
+  api.get('/auctions/:key', wrap((q) => {
+    const b = String(q.query['bids'] ?? '');
+    return svc.details(key(q), { bids: b === 'all' ? 'all' : /^\d+$/.test(b) ? Number(b) : undefined });
+  }));
   api.post('/auctions/:key/bids', (q, s) => s.status(201).json(svc.placeBid(key(q), q.body)));
 
   api.post('/auctions/:key/simulate', (q, s) => {
@@ -54,7 +57,10 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
   });
 
   // Server-Sent Events: the UI refetches whenever something changes (no polling storms).
+  let sse = 0;
   api.get('/events', (q, s) => {
+    if (sse >= 500) throw new AppError('RATE_LIMITED', 503, 'Too many live connections - try again shortly');
+    sse++;
     s.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no' });
     s.flushHeaders();
     s.write('retry: 2000\n\n');
@@ -62,6 +68,7 @@ export function createApp({ svc, demo = false, webDir, writeLimit = 120 }: AppOp
     const ping = setInterval(() => s.write(': ping\n\n'), 20_000);
     svc.bus.on('event', on);
     q.on('close', () => {
+      sse--;
       clearInterval(ping);
       svc.bus.off('event', on);
     });

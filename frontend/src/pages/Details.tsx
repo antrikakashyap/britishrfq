@@ -31,11 +31,12 @@ function Clock({ d, now }: { d: D; now: number }) {
 export default function Details() {
   const { key = '' } = useParams();
   const now = useNow();
-  const { data: d, error, refresh } = useLive(() => api.get(key), [key], (_i, ref) => ref.toLowerCase() === key.toLowerCase() || String(_i) === key);
+  const [all, setAll] = useState(false);
+  const { data: d, error, refresh } = useLive(() => api.get(key, all ? 'all' : undefined), [key, all], (_i, ref) => ref.toLowerCase() === key.toLowerCase() || String(_i) === key);
   const [demo, setDemo] = useState(false);
   const [local, setLocal] = useState<D>();
   useEffect(() => { api.meta().then((m) => setDemo(m.demo)).catch(() => {}); }, []);
-  useEffect(() => { setLocal(undefined); }, [key]);
+  useEffect(() => { setLocal(undefined); setAll(false); }, [key]);
   const data = d && local && Date.parse(local.serverTime) > Date.parse(d.serverTime) ? local : d;
   useTitle(data?.auction.refId ?? 'Auction');
 
@@ -56,7 +57,7 @@ export default function Details() {
 
   const a = data.auction;
   const finished = a.status === 'CLOSED' || a.status === 'FORCE_CLOSED';
-  const colors = supplierColors(data.bids);
+  const colors = supplierColors(data.history);
 
   return (
     <>
@@ -87,11 +88,11 @@ export default function Details() {
 
           <section className="panel">
             <header><h2>Quotes over time</h2><span className="sub">Hover a point for details</span></header>
-            <PriceChart bids={data.bids} activity={data.activity} cur={a.currency} />
+            <PriceChart bids={data.history} activity={data.activity} cur={a.currency} />
           </section>
 
           <section className="panel">
-            <header><h2>All bids by price</h2><span className="sub">Lowest first · highlighted rows are each supplier’s current quote</span></header>
+            <header><h2>All bids by price</h2><span className="sub num">Lowest first · {data.bids.length === data.bidsTotal ? `${data.bidsTotal} bids` : `showing ${data.bids.length} of ${data.bidsTotal}`}</span></header>
             {data.bids.length === 0 ? <div className="empty"><strong>No bids yet</strong></div> : (
               <div className="tblwrap">
                 <table className="tbl lb">
@@ -111,6 +112,11 @@ export default function Details() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+            {data.bids.length < data.bidsTotal && (
+              <div className="body" style={{ borderTop: '1px solid var(--line2)', textAlign: 'center' }}>
+                <button className="btn ghost sm" onClick={() => setAll(true)}>Show all {data.bidsTotal} bids</button>
               </div>
             )}
           </section>
@@ -140,7 +146,7 @@ export default function Details() {
           </section>
 
           <section className="panel">
-            <header><h2>Activity log</h2><span className="sub">{data.activity.length} events</span></header>
+            <header><h2>Activity log</h2><span className="sub num">{data.activity.length < data.activityTotal ? `latest ${data.activity.length} of ${data.activityTotal} events` : `${data.activityTotal} events`}</span></header>
             <Activity rows={data.activity} />
           </section>
         </div>

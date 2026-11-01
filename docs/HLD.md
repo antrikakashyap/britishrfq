@@ -157,7 +157,7 @@ stateDiagram-v2
   (`forced_close > orig_close`, `orig_close ≤ close ≤ forced_close`).
 * **Security:** helmet headers, JSON size cap, per-IP rate limit on writes, zod on every input, parameterised SQL only, no stack traces to clients.
 * **Observability:** every business event is in `activity_log` (immutable), structured error codes in API responses.
-* **Testability:** injected clock; 39 backend + 4 frontend tests incl. the spec's worked examples.
+* **Testability:** injected clock; 42 backend + 18 frontend tests, a live real-clock end-to-end script and an axe accessibility scan, incl. the spec's worked examples.
 * **Accessibility:** keyboard focus rings, `role="alert"` on errors, `aria-live` toasts, reduced-motion respected, colour never the only carrier of meaning.
 
 ## 6. Scaling path (out of scope for the assignment, designed for)

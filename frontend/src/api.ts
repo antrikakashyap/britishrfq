@@ -68,7 +68,12 @@ export interface Details {
   };
   ranking: RankRow[];
   bids: BidRow[];
+  /** total bids in the auction (the table may show fewer) */
+  bidsTotal: number;
+  /** every bid as (carrier, price, time) - drives the chart and supplier colours */
+  history: { carrierName: string; total: number; submittedAt: string }[];
   activity: LogRow[];
+  activityTotal: number;
 }
 export interface BidResult {
   bidId: number;
@@ -113,7 +118,7 @@ const post = <T,>(p: string, data?: unknown) => call<T>(p, { method: 'POST', bod
 
 export const api = {
   list: (q = '', status = 'ALL') => call<ListItem[]>(`/auctions?status=${status}&q=${encodeURIComponent(q)}`),
-  get: (key: string) => call<Details>(`/auctions/${encodeURIComponent(key)}`),
+  get: (key: string, bids?: 'all') => call<Details>(`/auctions/${encodeURIComponent(key)}${bids ? `?bids=${bids}` : ''}`),
   create: (data: unknown) => post<Details>('/auctions', data),
   bid: (key: string, data: unknown) => post<BidResult>(`/auctions/${encodeURIComponent(key)}/bids`, data),
   simulate: (key: string) => post<BidResult>(`/auctions/${encodeURIComponent(key)}/simulate`),

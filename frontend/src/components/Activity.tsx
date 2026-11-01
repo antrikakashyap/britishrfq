@@ -8,7 +8,7 @@ const CLS: Record<string, string> = {
 
 export default function Activity({ rows }: { rows: LogRow[] }) {
   return (
-    <ol className="log" aria-label="Activity log, newest first">
+    <ol className="log" aria-label="Activity log, newest first" tabIndex={0}>
       {[...rows].reverse().map((r) => (
         <li key={r.id} className={CLS[r.kind] ?? ''}>
           <div className="t"><span className="num">{time(r.at, true)}</span></div>
