@@ -43,4 +43,8 @@ describe('extension edge cases', () => {
   it('reports where the trigger window starts', () => {
     expect(evalExtension({ ...base, trig: 'BID_RECEIVED' }).windowStartMs).toBe(at(17, 50));
   });
+
+  it('is outside the window when now equals the close', () => {
+    expect(evalExtension({ ...base, trig: 'BID_RECEIVED', nowMs: at(18) })).toMatchObject({ inWindow: false, outcome: 'NONE' });
+  });
 });
