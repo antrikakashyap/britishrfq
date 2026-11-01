@@ -14,4 +14,11 @@ describe('formatting', () => {
     expect(span(307_000, false)).toBe('5m');
     expect(span(3_600_000, false)).toBe('1h 00m');
   });
+
+  it('round-trips a time through the datetime-local input format', () => {
+    const ms = Date.UTC(2026, 10, 5, 12, 34, 56);
+    const v = toLocalInput(ms);
+    expect(v).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+    expect(fromLocalInput(v)).toBe(Date.UTC(2026, 10, 5, 12, 34, 0));
+  });
 });
