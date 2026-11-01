@@ -17,4 +17,9 @@ describe('extension edge cases', () => {
     const e = evalExtension({ ...base, trig: 'BID_RECEIVED', extMin: 120 });
     expect(e).toMatchObject({ outcome: 'CAPPED', newCloseMs: at(19) });
   });
+
+  it('treats a new supplier joining at the last place as a rank change', () => {
+    const e = evalExtension({ ...base, trig: 'ANY_RANK_CHANGE', before: rk([1, 100]), after: rk([1, 100], [2, 200]) });
+    expect(e).toMatchObject({ fired: true, outcome: 'EXTENDED' });
+  });
 });
