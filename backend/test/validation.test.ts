@@ -22,4 +22,11 @@ describe('input validation', () => {
   it('rejects a reference ID that contains spaces', () => {
     expect(createSchema.safeParse(rfqBody({ refId: 'RFQ X1' })).success).toBe(false);
   });
+
+  it('uses USD when no currency is given', () => {
+    const { currency: _c, ...rest } = rfqBody();
+    const r = createSchema.safeParse(rest);
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.currency).toBe('USD');
+  });
 });
