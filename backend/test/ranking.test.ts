@@ -36,4 +36,10 @@ describe('ranking', () => {
     expect(rankChanged(a, a)).toBe(false);
     expect(rankChanged(a, rankBids([b(1, 1, 100), b(2, 2, 200), b(3, 3, 300)]))).toBe(true);
   });
+
+  it('keeps L1 unchanged when the leader only lowers its own price', () => {
+    const before = rankBids([b(1, 1, 100), b(2, 2, 200)]);
+    const after = rankBids([b(1, 1, 100), b(2, 2, 200), b(3, 1, 90)]);
+    expect(l1Changed(before, after)).toBe(false);
+  });
 });
