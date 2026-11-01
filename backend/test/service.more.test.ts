@@ -24,4 +24,11 @@ describe('service details', () => {
       expect((e as AppError).code).toBe('NOT_FOUND');
     }
   });
+
+  it('works out valid-until as the bid time plus the validity days', () => {
+    const k = open();
+    k.svc.placeBid('RFQ-T-1', bidBody('Maersk', 1000, { quoteValidityDays: 10 }));
+    const q = k.svc.details('RFQ-T-1').ranking[0]!;
+    expect(Date.parse(q.validUntil) - Date.parse(q.submittedAt)).toBe(10 * 86_400_000);
+  });
 });
