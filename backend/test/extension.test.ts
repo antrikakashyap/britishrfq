@@ -27,4 +27,9 @@ describe('extension edge cases', () => {
     const e = evalExtension({ ...base, trig: 'L1_CHANGE', before: rk([1, 100]), after: rk([1, 100], [2, 200]) });
     expect(e).toMatchObject({ inWindow: true, fired: false, outcome: 'NONE' });
   });
+
+  it('counts the very first bid as an L1 change', () => {
+    const e = evalExtension({ ...base, trig: 'L1_CHANGE', before: [], after: rk([1, 100]) });
+    expect(e.outcome).toBe('EXTENDED');
+  });
 });
