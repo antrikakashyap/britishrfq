@@ -15,7 +15,8 @@
     "seed": "npm run seed -w backend",
     "lint": "npm run typecheck",
     "e2e": "node scripts/e2e-live.mjs",
-    "docs:links": "node scripts/check-links.mjs"
+    "docs:links": "node scripts/check-links.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
