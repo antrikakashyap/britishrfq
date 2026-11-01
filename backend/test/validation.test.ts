@@ -40,4 +40,10 @@ describe('input validation', () => {
     const v = { bidStart: at(10), bidClose: at(11), forcedBidClose: at(12), triggerWindowMin: 60 };
     expect(timelineErrors(v, at(9))).toEqual({});
   });
+
+  it('trims the carrier name on a bid', () => {
+    const r = bidSchema.safeParse(bidBody('  Maersk Line  ', 1000));
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.carrierName).toBe('Maersk Line');
+  });
 });
