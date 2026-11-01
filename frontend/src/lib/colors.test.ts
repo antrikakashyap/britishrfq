@@ -12,4 +12,12 @@ describe('supplier colours', () => {
     ]);
     expect([c.get('First'), c.get('Second'), c.get('Late')]).toEqual(['var(--s1)', 'var(--s2)', 'var(--s3)']);
   });
+
+  it('folds the ninth supplier and beyond into the neutral grey', () => {
+    const bids = Array.from({ length: 10 }, (_, i) => ({ carrierName: `S${i}`, submittedAt: at(i) }));
+    const c = supplierColors(bids);
+    expect(c.get('S7')).toBe('var(--s8)');
+    expect(c.get('S8')).toBe('var(--s9)');
+    expect(c.get('S9')).toBe('var(--s9)');
+  });
 });
