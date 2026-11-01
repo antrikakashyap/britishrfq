@@ -21,4 +21,10 @@ describe('status boundaries', () => {
   it('is FORCE_CLOSED at the close when the close equals the forced close', () => {
     expect(statusAt({ ...t, closeMs: at(19) }, at(19))).toBe('FORCE_CLOSED');
   });
+
+  it('never changes again long after the end', () => {
+    const far = at(19) + 365 * 86_400_000;
+    expect(statusAt(t, far)).toBe('CLOSED');
+    expect(statusAt({ ...t, closeMs: at(19) }, far)).toBe('FORCE_CLOSED');
+  });
 });
