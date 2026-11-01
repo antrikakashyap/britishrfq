@@ -24,4 +24,10 @@ describe('ranking', () => {
     const r = rankBids([b(1, 1, 900), b(2, 2, 800), b(3, 1, 700)]);
     expect(r.map((x) => [x.supId, x.total])).toEqual([[1, 700], [2, 800]]);
   });
+
+  it('numbers five suppliers L1 to L5 in price order', () => {
+    const r = rankBids([b(1, 1, 50), b(2, 2, 10), b(3, 3, 40), b(4, 4, 20), b(5, 5, 30)]);
+    expect(r.map((x) => rankLabel(x.rank))).toEqual(['L1', 'L2', 'L3', 'L4', 'L5']);
+    expect(r.map((x) => x.supId)).toEqual([2, 4, 5, 3, 1]);
+  });
 });
