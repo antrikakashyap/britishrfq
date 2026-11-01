@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 320" role="img" aria-labelledby="t d">
+  <title id="t">How one late bid extends the auction</title>
+  <desc id="d">A bid at 5:55 PM falls inside the 10-minute trigger window, so the 6:00 PM close moves to 6:05 PM. The 7:00 PM forced close is a hard stop.</desc>
+  <defs>
+    <pattern id="h" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#dfe6ec"/><rect width="4" height="8" fill="#c3ced8"/></pattern>
+  </defs>
+  <rect width="1000" height="320" rx="12" fill="#ffffff" stroke="#d2dae1"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#44566a">
+    <rect x="70" y="160" width="420" height="20" rx="10" fill="#0f1f2e"/>
+    <rect x="490" y="160" width="35" height="20" fill="#f2a900"/>
+    <rect x="525" y="160" width="385" height="20" rx="10" fill="url(#h)"/>
+    <rect x="420" y="146" width="70" height="48" rx="8" fill="rgba(242,169,0,.16)" stroke="#f2a900" stroke-width="3"/>
+    <rect x="488" y="136" width="3" height="68" fill="#0f1f2e"/>
+    <rect x="523" y="136" width="3" height="68" fill="#b8860b"/>
+    <rect x="908" y="128" width="5" height="84" rx="2" fill="#b83a2e"/>
+    <circle cx="455" cy="170" r="9" fill="#0a6c6c" stroke="#fff" stroke-width="3"/>
+
+    <text x="470" y="84" text-anchor="end" font-weight="700" fill="#0a6c6c" font-size="16">1. A bid arrives at 5:55 PM</text>
+    <path d="M455 96v62" stroke="#0a6c6c" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="528" y="84" font-weight="700" fill="#7a4f00" font-size="16">3. New close: 6:05 PM</text>
+    <text x="528" y="104" fill="#7a4f00">(old close + Y = 5 min)</text>
+    <text x="910" y="84" text-anchor="end" fill="#b83a2e" font-weight="700" font-size="16">Forced close: 7:00 PM</text>
+    <text x="910" y="252" text-anchor="end" fill="#b83a2e">Hard stop. Never crossed.</text>
+
+    <text x="70" y="226">Bidding open</text>
+    <text x="710" y="226" text-anchor="middle" fill="#6b7b89">Room left to extend (it shrinks each time)</text>
+    <text x="486" y="226" text-anchor="end" font-weight="600" fill="#0f1f2e">Old close</text>
+    <text x="486" y="244" text-anchor="end" fill="#0f1f2e">6:00 PM</text>
+
+    <text x="455" y="282" text-anchor="middle" font-weight="700" fill="#0f1f2e" font-size="16">2. It lands inside the trigger window</text>
+    <text x="455" y="302" text-anchor="middle" fill="#7a4f00">5:50 to 6:00 PM (X = 10 min)</text>
+  </g>
+</svg>
