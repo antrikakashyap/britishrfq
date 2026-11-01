@@ -37,7 +37,9 @@ activity log record *why*.
 
 ## Deploy to Render (free)
 
-1. Push is already done: this repo contains a [`render.yaml`](render.yaml) Blueprint.
+Live: **https://british-auction-rfq-3cc2.onrender.com** (free plan: the first request after idle takes ~30-60 s to wake up).
+
+1. This repo contains a [`render.yaml`](render.yaml) Blueprint, so a fresh deployment is one click:
 2. On [dashboard.render.com](https://dashboard.render.com) choose **New > Blueprint**, select this repo and click **Apply**.
 3. When the build finishes, open the `*.onrender.com` URL. Health check: `/api/health`.
 

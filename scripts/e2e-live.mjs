@@ -85,7 +85,7 @@ ok(a.status === 'FORCE_CLOSED' && a.bidClose === a.forcedBidClose, 'BID auction 
 ok(Date.parse(a.bidClose) <= Date.parse(a.forcedBidClose), 'close never beyond forced close');
 ok(['EXTENSION_CAPPED', 'EXTENSION_BLOCKED', 'AUCTION_FORCE_CLOSED', 'TIME_EXTENDED'].every((k) => kinds.includes(k)), 'activity log has extensions, cap, blocked attempt and force close');
 ok(d.b.activity.filter((e) => e.kind.startsWith('TIME_EXT') || e.kind === 'EXTENSION_CAPPED').every((e) => e.reason && e.previousClose && e.newClose), 'every extension carries a reason and old -> new close');
-ok((await bid(R.b, 'Echo', 1)).s === 409, 'bid after force close rejected');
+ok((await bid(R.b, 'Echo', 500)).s === 409, 'bid after force close rejected');
 
 console.log('\n[8] Listing & details (spec s8)');
 const L = await j('GET', '/auctions');
